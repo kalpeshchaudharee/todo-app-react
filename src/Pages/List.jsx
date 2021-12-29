@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import SimpleButton from "../Components/SimpleButton";
 import SimpleTextInput from "../Components/SimpleTextInput";
-import SimpleCheckbox from "../Components/SimpleCheckbox";
 import SimpleModel from "../Components/SimpleModel";
-// import SimpleTable from "../Components/SimpleTable";
+import SimpleTable from "../Components/SimpleTable";
+import SimpleHeading from "../Components/SimpleHeading";
+import SimpleBulkAction from "../Components/SimpleBulkAction";
 
 export default function List() {
     const [taskList, setTaskList] = useState([]);
@@ -116,9 +117,7 @@ export default function List() {
 
     return (
         <div className="flex flex-col m-10">
-            <div className="grid justify-items-center mb-10">
-                <h1 className="text-4xl">Todo List</h1>
-            </div>
+            <SimpleHeading title="Todo List" />
             <div className="grid grid-cols-6 gap-4">
                 <div className="col-start-1 col-end-3">
                     <SimpleButton
@@ -141,89 +140,19 @@ export default function List() {
                     </div>
                 </div>
             </div>
-            <div className="w-100 h-5 text-center">
-                {
-                    selectedTasks.length ?
-                        <span className="cursor-pointer text-red-500 hover:text-red-900" onClick={bulkDelete}>Delete all selected</span>
-                        : ''
-                }
-            </div>
-            <div className="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                    <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                        {/* <SimpleTable titles={titles} rows={taskList} key="id"/> */}
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24"
-                                    >
-                                        <div className="flex items-center">
-                                            {taskList.length ?
-                                                <SimpleCheckbox
-                                                    name="select_all"
-                                                    id="select_all"
-                                                    onChange={selectAll}
-                                                />
-                                                : ''
-                                            }
-                                        </div>
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-xs text-center font-medium text-gray-500 uppercase tracking-wider w-80"
-                                    >
-                                        Task
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
-                                        Action
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {filteredTaskList.length ? filteredTaskList.map((task) => (
-                                    <tr key={task.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap w-24">
-                                            <div className="flex items-center">
-                                                <SimpleCheckbox
-                                                    name="select_task"
-                                                    id="select_task"
-                                                    value={task.selected}
-                                                    onChange={(e) => selectTask(e, task)}
-                                                />
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap w-80">
-                                            <div className="text-sm text-gray-900">{task.title}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex justify-around">
-                                            <SimpleButton
-                                                text="Edit"
-                                                className="text-indigo-600 border-indigo-200 hover:bg-indigo-600 focus:ring-indigo-600"
-                                                onClick={(e) => editTask(e, task)}
-                                            />
 
-                                            <SimpleButton
-                                                text="Delete"
-                                                className="text-red-600 border-red-200 hover:bg-red-600 focus:ring-red-600"
-                                                onClick={(e) => deleteTask(e, task)}
-                                            />
-                                        </td>
-                                    </tr>
-                                ))
-                                    :
-                                    <tr>
-                                        <td colSpan="4" className="px-6 py-4 whitespace-nowrap text-center">
-                                            <div className="text-sm text-gray-900">Tasks not available in your bucket...</div>
-                                        </td>
-                                    </tr>}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <SimpleBulkAction data={selectedTasks} action={bulkDelete} actionText="Delete all selected" />
 
+            <SimpleTable
+                taskList={taskList}
+                selectAll={selectAll}
+                filteredTaskList={filteredTaskList}
+                editTask={editTask}
+                deleteTask={deleteTask}
+                selectTask={selectTask}
+            />
+
+            {/* Add New Task Model */}
             <SimpleModel
                 show={open}
                 initialFocus={cancelButtonRef}
@@ -239,6 +168,7 @@ export default function List() {
                 cancelButtonRef={cancelButtonRef}
             />
 
+            {/* Edit Task Model */}
             <SimpleModel
                 show={openTask}
                 initialFocus={cancelButtonRef}
